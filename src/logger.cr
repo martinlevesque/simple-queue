@@ -13,7 +13,7 @@ class Logger
     @level = LEVELS_MAPPING[@human_level]["int_level"]
   end
 
-  def debug(msg : String) : String
+  def debug(msg : String)
     log(msg, "DEBUG")
   end
 
@@ -23,6 +23,9 @@ class Logger
 
   def error(msg : String)
     log(msg, "ERROR")
+  end
+
+  def error(msg : Nil)
   end
 
   private def format_log(msg : String, level : String)

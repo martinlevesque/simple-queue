@@ -14,17 +14,17 @@ describe Queuing::QueueStorageMemory do
     end
   end
 
-  describe "#pop" do
+  describe "#shift" do
     it "happy path" do
       s = Queuing::QueueStorageMemory.new
       s.push("record-1")
       s.push("record-2")
       s.push("record-3")
 
-      s.pop.should eq("record-1")
-      s.pop.should eq("record-2")
-      s.pop.should eq("record-3")
-      s.pop.should eq(nil)
+      s.shift.should eq("record-1")
+      s.shift.should eq("record-2")
+      s.shift.should eq("record-3")
+      s.shift.should eq(nil)
     end
   end
 end

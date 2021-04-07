@@ -2,7 +2,7 @@ require "./queue_storage_memory"
 
 module Queuing
   module QueueStorageMaker
-    def self.get
+    def self.get : QueueStorage
       if ENV.has_key?("QUEUE_STORAGE")
         # TODO
         QueueStorageMemory.new

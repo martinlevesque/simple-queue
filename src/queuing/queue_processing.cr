@@ -1,36 +1,33 @@
 require "./queue"
 require "./queue_storage_maker"
+require "./input_command_info"
 
 module Queuing
-  module QueueProcessing
-    @@queues = {} of String => Queue
+  class QueueProcessing
+    getter :ch_input
 
-    def self.process(command_info : Hash)
-      command = command_info["command"]
+    def initialize
+      @ch_input = Channel(InputCommandInfo).new
 
-      content = {
-        "PUSH":        ->{ process_push(parts) },
-        "SUBSCRIBE":   ->{ process_subscribe(parts) },
-        "UNSUBSCRIBE": ->{ process_unsubscribe(parts) },
-      }[command].call
-    end
+      spawn do
+        queues = Hash(String, Queue).new
 
-    def self.queue(name : String)
-      if @@queues.has_key?(name)
-        @@queues[name]
-      else
-        @@queues[name] = Queue.new(name, QueueStorageMaker.get)
+        while input_command_info = @ch_input.receive
+          q_name = input_command_info.command_info["queue"]
+
+          queue = QueueProcessing.access_queue(queues, q_name)
+
+          queue.ch_input.send(input_command_info.dup)
+        end
       end
     end
 
-    def self.process_push(command_info : Hash)
-      queue(command_info["queue"]).push(command_info)
-    end
-
-    def self.process_subscribe(command_info : Hash)
-    end
-
-    def self.process_unsubscribe(command_info : Hash)
+    def self.access_queue(queues : Hash(String, Queue), name : String)
+      if queues.has_key?(name)
+        queues[name]
+      else
+        queues[name] = Queue.new(name, Queuing::QueueStorageMaker.get)
+      end
     end
   end
 end

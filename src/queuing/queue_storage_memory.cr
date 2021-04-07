@@ -8,14 +8,25 @@ module Queuing
 
     def push(content : String)
       @deque.push(content)
+      puts "push cur size -> #{@deque.size}"
     end
 
-    def pop : String | Nil
-      @deque.shift?
+    def shift : String | Nil
+      res = @deque.shift?
+      puts "shift cur size -> #{@deque.size}"
+      res
+    end
+
+    def front : String | Nil
+      @deque.first
     end
 
     def len
       @deque.size
+    end
+
+    def to_s
+      "#{@deque}"
     end
   end
 end
